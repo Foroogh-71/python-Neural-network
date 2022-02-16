@@ -4,6 +4,10 @@ Created on Thu Jan  6 14:14:10 2022
 
 @author: Foroogh
 """
+from IPython import get_ipython
+get_ipython().magic('reset -f')
+get_ipython().magic('clear')
+
 
 import numpy as np
 from scipy.stats import kurtosis
@@ -24,6 +28,25 @@ from sklearn.cluster import SpectralClustering
 from sklearn.cluster import OPTICS
 from scipy.cluster.hierarchy import dendrogram
 from sklearn.decomposition import PCA
+
+plt.close('all')
+
+def color(intnumber):
+    if (intnumber==0):
+        color='b';
+    if (intnumber==1):
+        color='r'
+    if (intnumber==2):
+        color='g'
+    if (intnumber==3):
+        color='y'
+    if (intnumber==4):
+        color='c'
+    if (intnumber==5):
+        color='m'
+    if (intnumber==6):
+        color='k'
+    return color
 
 
 """
@@ -82,7 +105,7 @@ for i in range(divData.shape[0]):
 
 outputC=np.zeros((numberOfSeg,2));
 
-mergeFtrsC=np.zeros((numberOfSeg,5)) #empty matrix
+mergeFtrsC=np.zeros((numberOfSeg,4)) #empty matrix
 mergeFtrsR=np.vstack([indexDD,stdDD,meanDD,rmsDD]) 
 for i in range(len(mergeFtrsR)):
    for j in range(len(mergeFtrsR[0])):
@@ -111,7 +134,7 @@ sh_inputs = np.array(sh_inputs)  # شافل ورودی
  #---- Train Test ----
 """
 
-split_border = int(0.3 * len(sh_inputs)) 
+split_border = int(0.5 * len(sh_inputs)) 
 
 x_train=sh_inputs[0:split_border, :] 
 
@@ -120,6 +143,15 @@ x_val= sh_inputs[split_border: , :]
 x_train=x_train[x_train[:, 0].argsort()] 
 x_val=x_val[x_val[:, 0].argsort()]
 #----------------------------------------------------
+matrix=np.zeros((629,104));
+
+#
+matrix[:,:4]=x_val
+for i in range(1258):
+    for j in range(629):
+      if(i== (x_val[j,0])):
+         matrix[j,4:]=divData[i]
+#-----------------------------------------------------
 
 pca = PCA(n_components=3)
 fit = pca.fit(x_train[:, 1:])
@@ -197,7 +229,7 @@ zs = x_val[:, 3]
 
 
 
-k=5;
+k=4;
 #-------------------------------------------------------------
 # spectral clustering
 # define the model
@@ -387,3 +419,154 @@ score =silhouette_score(x_val[:,1:], yhat10)
 print('gaussian mixture clustering Score=%.3f' % (score*100), '%' )
 #----------------------------------------------------------------------------
 
+Feature=0 #index
+temp=ys
+df = pd.DataFrame(yhat1)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat1 = df.to_numpy()
+
+df = pd.DataFrame(yhat2)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat2 = df.to_numpy()
+
+df = pd.DataFrame(yhat3)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat3 = df.to_numpy()
+
+df = pd.DataFrame(yhat4)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat4 = df.to_numpy()
+
+df = pd.DataFrame(yhat5)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat5 = df.to_numpy()
+
+df = pd.DataFrame(yhat6)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat6 = df.to_numpy()
+
+df = pd.DataFrame(yhat7)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat7 = df.to_numpy()
+
+df = pd.DataFrame(yhat9)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat9 = df.to_numpy()
+
+df = pd.DataFrame(yhat10)
+df.insert(loc=0, column='', value=x_val[:,Feature])
+yhat10 = df.to_numpy()
+
+fig, axs = plt.subplots(3,3)
+fig.suptitle('STD')
+
+fig1, axs1 = plt.subplots(3,3)
+fig1.suptitle('Mean')
+
+fig2, axs2 = plt.subplots(3,3)
+fig2.suptitle('RMS')
+
+axs[0,0].scatter(yhat1[:,0]*50,xs ,c=yhat1[:,1])
+axs[0,0].set_title('spectral clustering ')
+
+axs[0,1].scatter(yhat2[:,0]*50,xs ,c=yhat2[:,1])
+axs[0,1].set_title('birch clustering ')
+
+axs[0,2].scatter(yhat3[:,0]*50,xs ,c=yhat3[:,1])
+axs[0,2].set_title('agglomerative clustering ')
+
+axs[1,0].scatter(yhat4[:,0]*50,xs ,c=yhat4[:,1])
+axs[1,0].set_title('affinity clustering ')
+
+axs[1,1].scatter(yhat5[:,0]*50,xs ,c=yhat5[:,1])
+axs[1,1].set_title('DB scan clustering ')
+
+axs[1,2].scatter(yhat6[:,0]*50,xs ,c=yhat6[:,1])
+axs[1,2].set_title('k-means clustering ')
+
+axs[2,0].scatter(yhat7[:,0]*50,xs ,c=yhat7[:,1])
+axs[2,0].set_title('mini-batch k-means clustering ')
+
+axs[2,1].scatter(yhat9[:,0]*50,xs ,c=yhat9[:,1])
+axs[2,1].set_title('mean shift clustering ')
+
+axs[2,2].scatter(yhat10[:,0]*50,xs ,c=yhat10[:,1])
+axs[2,2].set_title('gaussian mixture clustering ')
+
+
+axs1[0,0].scatter(yhat1[:,0]*50,ys ,c=yhat1[:,1])
+axs1[0,0].set_title('spectral clustering ')
+
+axs1[0,1].scatter(yhat2[:,0]*50,ys ,c=yhat2[:,1])
+axs1[0,1].set_title('birch clustering ')
+
+axs1[0,2].scatter(yhat3[:,0]*50,ys ,c=yhat3[:,1])
+axs1[0,2].set_title('agglomerative clustering ')
+
+axs1[1,0].scatter(yhat4[:,0]*50,ys ,c=yhat4[:,1])
+axs1[1,0].set_title('affinity clustering ')
+
+axs1[1,1].scatter(yhat5[:,0]*50,ys ,c=yhat5[:,1])
+axs1[1,1].set_title('DB scan clustering ')
+
+axs1[1,2].scatter(yhat6[:,0]*50,ys ,c=yhat6[:,1])
+axs1[1,2].set_title('k-means clustering ')
+
+axs1[2,0].scatter(yhat7[:,0]*50,ys ,c=yhat7[:,1])
+axs1[2,0].set_title('mini-batch k-means clustering ')
+
+axs1[2,1].scatter(yhat9[:,0]*50,ys ,c=yhat9[:,1])
+axs1[2,1].set_title('mean shift clustering ')
+
+axs1[2,2].scatter(yhat10[:,0]*50,ys ,c=yhat10[:,1])
+axs1[2,2].set_title('gaussian mixture clustering ')
+
+axs2[0,0].scatter(yhat1[:,0]*50,zs ,c=yhat1[:,1])
+axs2[0,0].set_title('spectral clustering ')
+
+axs2[0,1].scatter(yhat2[:,0]*50,zs ,c=yhat2[:,1])
+axs2[0,1].set_title('birch clustering ')
+
+axs2[0,2].scatter(yhat3[:,0]*50,zs ,c=yhat3[:,1])
+axs2[0,2].set_title('agglomerative clustering ')
+
+axs2[1,0].scatter(yhat4[:,0]*50,zs ,c=yhat4[:,1])
+axs2[1,0].set_title('affinity clustering ')
+
+axs2[1,1].scatter(yhat5[:,0]*50,zs ,c=yhat5[:,1])
+axs2[1,1].set_title('DB scan clustering ')
+
+axs2[1,2].scatter(yhat6[:,0]*50,zs ,c=yhat6[:,1])
+axs2[1,2].set_title('k-means clustering ')
+
+axs2[2,0].scatter(yhat7[:,0]*50,zs ,c=yhat7[:,1])
+axs2[2,0].set_title('mini-batch k-means clustering ')
+
+axs2[2,1].scatter(yhat9[:,0]*50,zs ,c=yhat9[:,1])
+axs2[2,1].set_title('mean shift clustering ')
+
+axs2[2,2].scatter(yhat10[:,0]*50,zs ,c=yhat10[:,1])
+axs2[2,2].set_title('gaussian mixture clustering ')
+
+
+fig6, axs6 = plt.subplots(3,1)
+fig6.suptitle('signal')
+axs6[0].scatter(x_val[:, 0]*50 ,zs,c=yhat10[:,1])
+axs6[0].set_title('title= RMS segment')
+axs6[0].set_ylabel('normalized amount')
+
+for i in range(0,629):
+    #aaaaaa=range((1)*20+1,2*20)
+    #axs6[1].plot(range((int(matrix[i,0])-1)*20+1,int(matrix[i,0])*20),matrix[i,5:],color(yhat7[i,1]))
+    axs6[1].plot(range((int(matrix[i,0]))*50,int(matrix[i,0]+1)*50),matrix[i,54:],color(yhat10[i,1]))
+
+    #axs6[1].plot(range(((i-1)*20+1,i*20)),matrix[i,5:],color(yhat7[i,1]))
+axs6[1].set_title('title= signal ')
+axs6[1].set_ylabel('amount')
+
+
+t = np.linspace(0, 62996,62996)
+axs6[2].plot(t,data)
+axs6[2].set_title('title= signal without color')
+axs6[2].set_ylabel('amount')
+axs6[2].set_xlabel('number of datapoint')
